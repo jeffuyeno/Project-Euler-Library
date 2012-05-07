@@ -1,3 +1,6 @@
-Inteded as a base library, plus my solutions for: projecteuler.net.
+#Project Euler Library
+Intended as a base library, plus my solutions for: projecteuler.net.
+
+I'm purposely omitting any external libraries, since this is supposed to be an excercise in building my own tools.
 
 More information to follow.
