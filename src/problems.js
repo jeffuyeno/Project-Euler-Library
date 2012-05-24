@@ -22,7 +22,7 @@ if( !window.eulerproblems ) {
           , set = euler.fibonacci(4000000)
           ;
         euler.util.apply(set, function(val, index){
-          if( val % 2 = 0 ) {
+          if( val % 2 == 0 ) {
             solution += val;
           }
         });

@@ -62,7 +62,29 @@ if(!window.euler) {
      * @return {Array}
      */
     fibonacciByIndex : function(index) {
+      var set = [];
+      //hash this
+      set = euler.util.buildSet(euler._fibonacci, function(n, set) {
+        if( n >= index ) {
+          return false;
+        }
+        return true;
+      }, [0, 1]);
+    },
 
+    /**
+     * Intended for internal use with euler.util.buildSet
+     * @param  {Number} n   [description]
+     * @param  {Array} set [description]
+     * @return {}     [description]
+     */
+    _fibonacci : function(n, set) {
+      var len = set.length;
+      //we don't meet the minimum requirements for fibonacci sequence
+      if( len < 2 ) {
+        throw "Fibonacci sequences expect to be seeded with at least [0, 1]"
+      }
+      return set[len -1] + set[len-2];
     },
 
     /**
@@ -80,7 +102,7 @@ if(!window.euler) {
         //generate new primes
       }
 
-      return primes; Dyh@l1t
+      return primes;
     }
   };
 
@@ -114,7 +136,7 @@ if(!window.euler) {
    * eventually add more items to each hash
    * @param  {String} namespace hash to retrieve, if no hash is defined,
    * returns all hashes 
-   * @param {Number} num (optional) passes back hash trimmed to number
+   * @param {Number} num (optional) passes back hash trimmed to index
    * @return {Array}
    */
   euler.util.hash = function(namespace, num) {
@@ -153,15 +175,16 @@ if(!window.euler) {
     }
 
     euler.util._hashes[namespace].concat(values);
-  }
+  };
 
   /**
    * High level method to build sets
    * @param  {Function} buildFn takes n and generates a value
    * @param  {Function} terminateFn determines when to terminate generating set
+   * @param  {Array} seed (optional) array to start with or continue on 
    * @return {Array}
    */
-  euler.util.buildSet = function(buildFn, terminateFn) {
+  euler.util.buildSet = function(buildFn, terminateFn, seed) {
     // do function checking here
     
     var set = []
@@ -172,5 +195,16 @@ if(!window.euler) {
     }
 
     return set;
-  }
+  };
+
+  /**
+   * Handles getting and updating hashes of number sets
+   * @param  {[type]} buildFn     [description]
+   * @param  {[type]} terminateFn [description]
+   * @param  {[type]} namespace   [description]
+   * @return {[type]}             [description]
+   */
+  euler.util.getNumSet = function(buildFn, terminateFn, namespace) {
+
+  };
 }
