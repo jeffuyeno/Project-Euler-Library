@@ -48,9 +48,23 @@ if(!window.euler) {
       });
     },
 
-    // We'll build and store this on the fly, since it could be a bit
-    // expensive
-    _primes : [],
+    /**
+     * Builds fibonacci sequence up to max number
+     * @param {Number} ceiling maximum number to get fibonacci sequence by
+     */
+    fibonacciByMax : function(ceiling) {
+
+    },
+
+    /**
+     * Builds fibonacci up to index
+     * @param  {Number} index 
+     * @return {Array}
+     */
+    fibonacciByIndex : function(index) {
+
+    },
+
     /**
      * Returns primes up to the passed number. Since we're dynamically
      * building _primes, this should first check to see what exists and then
@@ -60,7 +74,13 @@ if(!window.euler) {
      * @return {Array}
      */
     getPrimes : function(num) {
+      var primes = euler.util.hash('primes', num);
 
+      if( primes.length < num ) {
+        //generate new primes
+      }
+
+      return primes; Dyh@l1t
     }
   };
 
@@ -85,5 +105,72 @@ if(!window.euler) {
     for( i=len; i--; ) {
       fn(arr[i], i);
     }
-  } 
+  };
+
+
+  euler.util._hashes = [];
+  /**
+   * Hashes array to euler.util._hashes, we're assuming that we want to
+   * eventually add more items to each hash
+   * @param  {String} namespace hash to retrieve, if no hash is defined,
+   * returns all hashes 
+   * @param {Number} num (optional) passes back hash trimmed to number
+   * @return {Array}
+   */
+  euler.util.hash = function(namespace, num) {
+    if(!namespace) {
+      return euler.util._hashes
+    }
+
+    if(!!namespace && !euler.util._hashes[namespace]) {
+      euler.util._hashes[namespace] = [];
+    }
+
+    var hash = euler.util._hashes[namespace];
+
+    if(+num > hash.length) {
+      hash = hash.slice(0, +num);
+    }
+
+    return hash;
+  };
+
+  /**
+   * Dumb set, does not attempt to intelligently apply additional data
+   * @param {String} namespace
+   * @param {Array} values    
+   */
+  euler.util.hash.set = function(namespace, values) {
+    euler.util._hashes[namespace] = values;
+  };
+
+  /**
+   * 
+   */
+  euler.util.hash.append = function(namespace, values) {
+    if(!euler.util._hashes[namespace]) {
+      euler.util._hashes[namespace] = [];
+    }
+
+    euler.util._hashes[namespace].concat(values);
+  }
+
+  /**
+   * High level method to build sets
+   * @param  {Function} buildFn takes n and generates a value
+   * @param  {Function} terminateFn determines when to terminate generating set
+   * @return {Array}
+   */
+  euler.util.buildSet = function(buildFn, terminateFn) {
+    // do function checking here
+    
+    var set = []
+      , i = 0;
+    while(terminateFn(i, set)) {
+      set.push(buildFn(i, set));
+      i++;
+    }
+
+    return set;
+  }
 }

@@ -1,6 +1,7 @@
 if( !window.eulerproblems ) {
 	window.eulerproblems = [
-		{ description: "Add all the natural numbers below one thousand that are multiples of 3 or 5."
+		// #1
+    { description: "Add all the natural numbers below one thousand that are multiples of 3 or 5."
 		, solution: function() {
         var solution = 0
           , max = 1000
@@ -14,5 +15,19 @@ if( !window.eulerproblems ) {
         return solution;
 		  }		
 		}
+    // #2
+  , { description: "By considering the terms in the Fibonacci sequence whose values do not exceed four million, find the sum of the even-valued terms."
+    , solution: function() {
+        var solution = 0
+          , set = euler.fibonacci(4000000)
+          ;
+        euler.util.apply(set, function(val, index){
+          if( val % 2 = 0 ) {
+            solution += val;
+          }
+        });
+        return solution;
+      }
+    }  
 	]
 }
