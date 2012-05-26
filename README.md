@@ -11,3 +11,4 @@ More information to follow.
   ** the ```get``` method should probably allow fetching by index and by callback
 * Other high order methods besides buildNumberSet?
 * add Array filter to filter uniques out (probably want to optimize this call)
+* 

@@ -18,8 +18,10 @@ if( !window.eulerproblems ) {
     // #2
   , { description: "By considering the terms in the Fibonacci sequence whose values do not exceed four million, find the sum of the even-valued terms."
     , solution: function() {
+        euler.fibonacci.init();
+
         var solution = 0
-          , set = euler.fibonacci(4000000)
+          , set = euler.fibonacci.byMax(4000000)
           ;
         euler.util.apply(set, function(val, index){
           if( val % 2 == 0 ) {

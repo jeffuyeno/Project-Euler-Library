@@ -32,7 +32,11 @@ if(!window.euler) {
 
       return true;
     },
+  
 
+  // Primes
+  // ---------------------------------------------------------------------------
+  
     /**
      * Gets all the prime factors for a number
      * @param  {[type]} num [description]
@@ -46,45 +50,6 @@ if(!window.euler) {
       euler.util.apply(primes, function(factor){
 
       });
-    },
-
-    /**
-     * Builds fibonacci sequence up to max number
-     * @param {Number} ceiling maximum number to get fibonacci sequence by
-     */
-    fibonacciByMax : function(ceiling) {
-
-    },
-
-    /**
-     * Builds fibonacci up to index
-     * @param  {Number} index 
-     * @return {Array}
-     */
-    fibonacciByIndex : function(index) {
-      var set = [];
-      //hash this
-      set = euler.util.buildSet(euler._fibonacci, function(n, set) {
-        if( n >= index ) {
-          return false;
-        }
-        return true;
-      }, [0, 1]);
-    },
-
-    /**
-     * Intended for internal use with euler.util.buildSet
-     * @param  {Number} n   [description]
-     * @param  {Array} set [description]
-     * @return {}     [description]
-     */
-    _fibonacci : function(n, set) {
-      var len = set.length;
-      //we don't meet the minimum requirements for fibonacci sequence
-      if( len < 2 ) {
-        throw "Fibonacci sequences expect to be seeded with at least [0, 1]"
-      }
-      return set[len -1] + set[len-2];
     },
 
     /**
@@ -105,10 +70,70 @@ if(!window.euler) {
       return primes;
     }
   };
+  
+  // Fibonacci Methods
+  // ---------------------------------------------------------------------------  
+  
+  euler.fibonacci = {
+    _inited : false,
+    init : function() {
+      if( !this._inited ) {
+        euler.util.hash.set('fibonacci', [0,1]);
+        this._inited = true;
+      }
+    },
+
+    /**
+     * Builds fibonacci sequence up to max number
+     * @param {Number} ceiling maximum number to get fibonacci sequence by
+     */
+    byMax : function(ceiling) {
+      var set = [];
+
+      set = euler.util.getNumSet(this._fibonacci, ceiling, 'fibonacci');
+
+      return set;
+    },
+
+    /**
+     * Builds fibonacci up to index
+     * @param  {Number} index 
+     * @return {Array}
+     */
+    byIndex : function(index) {
+      var set = [];
+      //hash this
+      set = euler.util.buildNumset(this._fibonacci, function(n, set) {
+        if( n >= index ) {
+          return false;
+        }
+        return true;
+      }, 'fibonacci');
+
+      return set;
+    },
+
+    /**
+     * Intended for internal use with euler.util.buildSet
+     * @param  {Number} n   [description]
+     * @param  {Array} set [description]
+     * @return {}     [description]
+     */
+    _fibonacci : function(n, set) {
+      var len = set.length;
+      //we don't meet the minimum requirements for fibonacci sequence
+      if( len < 2 ) {
+        throw "Fibonacci sequences expect to be seeded with at least [0, 1]"
+      }
+      return set[len -1] + set[len-2];
+    }
+  };
+  
 
   
   // Util
   //---------------------------------------------------------------------------- 
+  
   /**
    * Separating out high level methods from the specific math methods here
    * 
@@ -129,6 +154,23 @@ if(!window.euler) {
     }
   };
 
+  /**
+   * filters array if fn returns true
+   * @param  {Array}   arr
+   * @param  {Function} fn
+   * @return {Array}
+   */
+  euler.util.filter = function(arr, fn) {
+    var i
+      , len = arr.length
+      , newArr = []
+      ;
+      for( i=len; i--; ) {
+        if( fn(arr[i], i) ) {
+          newArr.push(arr[i]);
+        }
+      }
+  }
 
   euler.util._hashes = [];
   /**
@@ -167,29 +209,31 @@ if(!window.euler) {
   };
 
   /**
-   * 
-   */
-  euler.util.hash.append = function(namespace, values) {
-    if(!euler.util._hashes[namespace]) {
-      euler.util._hashes[namespace] = [];
-    }
-
-    euler.util._hashes[namespace].concat(values);
-  };
-
-  /**
    * High level method to build sets
    * @param  {Function} buildFn takes n and generates a value
-   * @param  {Function} terminateFn determines when to terminate generating set
+   * @param  {Function|Number} terminate determines when to terminate generating
+   *                           set or checks against current index if Number
    * @param  {Array} seed (optional) array to start with or continue on 
    * @return {Array}
    */
   euler.util.buildSet = function(buildFn, terminateFn, seed) {
-    // do function checking here
+    var set = seed || []
+      , i = 0
+      , terminate = isNaN(terminateFn) ? terminateFn
+                                       : function(i, set) { 
+                                           return (set[i] < terminateFn)
+                                         }
+      ;
+
+    // if the seed is larger than the terminate, return the trimmed seed
+    if( !terminate(i, set) ) {
+      return euler.util.trimSet(terminate, set);
+    }
+
+    // seed is actually a seed, build the set
     
-    var set = []
-      , i = 0;
-    while(terminateFn(i, set)) {
+
+    while(terminate(i, set)) {
       set.push(buildFn(i, set));
       i++;
     }
@@ -198,13 +242,45 @@ if(!window.euler) {
   };
 
   /**
-   * Handles getting and updating hashes of number sets
-   * @param  {[type]} buildFn     [description]
-   * @param  {[type]} terminateFn [description]
-   * @param  {[type]} namespace   [description]
-   * @return {[type]}             [description]
+   * Trims set down to terminateFn
+   * @param  {Function} terminateFn
+   * @param  {Array} set         
+   * @return {Array}             
    */
-  euler.util.getNumSet = function(buildFn, terminateFn, namespace) {
+  euler.util.trimSet = function(terminateFn, set) {
+    var len = set.length
+      , i
+      ;
 
+    for( i=len; i--; ) {
+      var subset = set.slice(0, i);
+      if( !terminateFn(i, subset) ) {
+        return subset;
+      }
+    }
+
+    return [];
+  };
+
+  /**
+   * Handles getting and updating hashes of number sets
+   * @param  {Function} buildFn     
+   * @param  {Function|Number} terminate can be a function or number, if a
+   *                           number, will return an index of that namespace
+   * @param  {String} namespace   
+   * @return {Array}             
+   */
+  euler.util.getNumSet = function(buildFn, terminate, namespace) {
+    var set = euler.util.hash(namespace)
+      , returnSet = [];
+
+    returnSet = euler.util.buildSet(buildFn, terminate, set);
+    
+    // Make sure we want to hash the return results
+    if( returnSet.length > set.length) {
+      euler.util.hash.set(namespace, returnSet);
+    }
+
+    return returnSet;
   };
 }
