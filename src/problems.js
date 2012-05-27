@@ -30,6 +30,18 @@ if( !window.eulerproblems ) {
         });
         return solution;
       }
-    }  
+    }
+  , { description: "Find the largest prime factor of a composite number."
+    , solution: function() {
+        var solution = 0
+          , target = 600851475143
+          , primeFactors = euler.getPrimeFactors(target)
+          ;
+
+        solution = primeFactors[primeFactors.length - 1];
+
+        return solution;
+      }
+    }    
 	]
 }
