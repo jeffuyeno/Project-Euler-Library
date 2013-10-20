@@ -527,7 +527,8 @@ euler.primes = NumberSet([1], function(n, set){
  * @return {Array}
  */
 euler.getPrimes = function(num) {
-  return euler.primes.getSetByMax(num);
+  var primes = euler.primes.getSetByMax(num);
+  return primes.slice(0, - 1);
 };
 
 /**
