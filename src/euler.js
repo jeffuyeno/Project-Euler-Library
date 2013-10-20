@@ -501,13 +501,15 @@ euler.getFactors = function(num) {
  * @return {Boolean}
  */
 euler.hasFactors = function(num, factors){
-  numFactors = euler.getFactors(num);
+  var numFactors = euler.getFactors(num);
   // exit early if we have more factors than the number
-  if( factors > numFactors ) {
+  if( factors.length > numFactors.length ) {
     return false;
   }
 
-  return factors.every(function(val){ numFactors.indexOf(val) >= 0 });
+  return factors.every(function(val){ 
+    return numFactors.indexOf(val) >= 0 
+  });
 };
 
 // Primes
