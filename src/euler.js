@@ -37,7 +37,10 @@ if(!window.euler) {
   euler.prime = {
   // Primes
   // ---------------------------------------------------------------------------
-  
+    init : function() {
+      euler.util.hash.set('primes', [1]);
+    },
+
     /**
      * Gets all the prime factors for a number
      * @param  {[type]} num [description]
@@ -48,27 +51,82 @@ if(!window.euler) {
         , primes = this.getPrimes(num)
         ;
       
-      euler.util.apply(primes, function(factor){
-
+      euler.util.filter(primes, function(idx, factor){
+        if( num % factor === 0 ) {
+          return true;
+        }
+        return false;
       });
+
+      return primes;
     },
 
     /**
-     * Returns primes up to the passed number. Since we're dynamically
-     * building _primes, this should first check to see what exists and then
-     * add primes to it as necessary
-     *  
+     * Wrapper around 'primes' NumberSet namespace  
      * @param  {Int} num value to get primes up to
      * @return {Array}
      */
     getPrimes : function(num) {
-      var primes = euler.util.hash('primes', num);
-
-      if( primes.length < num ) {
-        //generate new primes
-      }
+      var primes = euler.util.getNumberSet(this._primes, num, 'primes');
 
       return primes;
+    },
+
+    /**
+     * Generates next prime in list, for use with buildSet
+     * @param  {Number} n 
+     * @param  {Array} set
+     * @return {Number}     [description]
+     */
+    _primes : function(n, set) {
+      var i = set[n] + 1; 
+
+      //early escape
+      if( euler.prime.isPrime(i) ) {
+        return i;
+      }
+
+      while( !euler.prime.isPrime(i) ) {
+        if( euler.prime.isPrime(i) ) {
+          return i;
+        }
+        i++;
+      }
+
+      return 0;
+    },
+    
+
+    /**
+     * Determines if a number is prime
+     * @param  {Number}  num 
+     * @return {Boolean}     
+     */
+    isPrime: function(num) {
+      //early exits
+      if( num == 1 || num == 2 ) {
+        return true;
+      }
+      
+      var len = Math.sqrt(num)
+        , i
+        ;
+
+      //early exits
+      if( len === Math.floor(len) ) {
+        return false;
+      }
+
+      len = Math.floor(len);
+
+      for( i=2; i<len; i++ ) {
+        if( num % i === 0 ) {
+          return false;
+        }
+      } 
+
+      return true;
+    
     }
   };
   
@@ -91,7 +149,7 @@ if(!window.euler) {
     byMax : function(ceiling) {
       var set = [];
 
-      set = euler.util.getNumSet(this._fibonacci, ceiling, 'fibonacci');
+      set = euler.util.getNumberSet(this._fibonacci, ceiling, 'fibonacci');
 
       return set;
     },
@@ -104,11 +162,8 @@ if(!window.euler) {
     byIndex : function(index) {
       var set = [];
       //hash this
-      set = euler.util.buildNumset(this._fibonacci, function(n, set) {
-        if( n >= index ) {
-          return false;
-        }
-        return true;
+      set = euler.util.buildNumberSet(this._fibonacci, function(n, set) {
+        return ( n <= index );
       }, 'fibonacci');
 
       return set;
@@ -118,7 +173,7 @@ if(!window.euler) {
      * Intended for internal use with euler.util.buildSet
      * @param  {Number} n   [description]
      * @param  {Array} set [description]
-     * @return {}     [description]
+     * @return {Number}
      */
     _fibonacci : function(n, set) {
       var len = set.length;
@@ -167,10 +222,24 @@ if(!window.euler) {
       , newArr = []
       ;
       for( i=len; i--; ) {
-        if( fn(arr[i], i) ) {
+        if( fn(i, arr[i]) ) {
           newArr.push(arr[i]);
         }
       }
+    return newArr; 
+  }
+
+  /**
+   * Finds the intersection of the subset and the set. Subset is assumed to be
+   * smaller than set
+   * @param  {Array} subset
+   * @param  {Array} set
+   * @return {Array}
+   */
+  euler.util.intersect = function(subset, set) {
+    return subset.filter(function(item) {
+      return set.indexOf(item) !== -1;
+    });
   }
 
   euler.util._hashes = [];
@@ -212,18 +281,21 @@ if(!window.euler) {
   /**
    * High level method to build sets
    * @param  {Function} buildFn takes n and generates a value
-   * @param  {Function|Number} terminate determines when to terminate generating
-   *                           set or checks against current index if Number
+   * @param  {Function|Number} terminate determines when to terminate generation
+   *         of the set:
+   *         fn() when returns false, generation stops
+   *         Number when current value is greater than terminate
    * @param  {Array} seed (optional) array to start with or continue on 
    * @return {Array}
    */
   euler.util.buildSet = function(buildFn, terminateFn, seed) {
     var set = seed || []
       , i = 0
-      , terminate = isNaN(terminateFn) ? terminateFn
-                                       : function(i, set) { 
-                                           return (set[i] < terminateFn)
-                                         }
+      , terminate = isNaN(terminateFn) 
+                  ? terminateFn
+                  : function(i, set) { 
+                      return (set[i] < terminateFn)
+                    }
       ;
 
     // if the seed is larger than the terminate, return the trimmed seed
@@ -232,8 +304,6 @@ if(!window.euler) {
     }
 
     // seed is actually a seed, build the set
-    
-
     while(terminate(i, set)) {
       set.push(buildFn(i, set));
       i++;
@@ -249,7 +319,7 @@ if(!window.euler) {
    * @return {Array}             
    */
   euler.util.trimSet = function(terminateFn, set) {
-    var len = set.length
+    var len = set.length - 1
       , i
       ;
 
@@ -271,7 +341,7 @@ if(!window.euler) {
    * @param  {String} namespace   
    * @return {Array}             
    */
-  euler.util.getNumSet = function(buildFn, terminate, namespace) {
+  euler.util.getNumberSet = function(buildFn, terminate, namespace) {
     var set = euler.util.hash(namespace)
       , returnSet = [];
 
@@ -285,3 +355,197 @@ if(!window.euler) {
     return returnSet;
   };
 }
+
+
+/**
+ * Class NumberSet
+ *
+ * Represents all values in a possible set of numbers, this does not necessarily
+ * mean that we have calculated them yet, but they can exist given n iterations
+ *
+ * Note that we're being lazy here with inheritance, we don't really need a deep
+ * prototype chain, we'll be assigning one-offs to the global namespace.
+ * 
+ * @param  {Array} seed NumberSet to be intialized with
+ * @param  {Function} buildFn function to iterate for steps, should expect to
+ *         receive n, set where n is the current step and set is the current set.
+ *         Should return false if there are no more numbers in the set
+ * @return {Object} returns array like object, see that properties for internal methods
+ */
+var NumberSet = function(seed, buildFn){
+  var that = seed || [];
+  that.buildFn = buildFn || function(n, set) { return n };
+
+  /**
+   * Responsible for fetching indeces of the NumberSet. If the index does not
+   * exist, the existing set should populate up to the current index and return
+   * it.
+   * 
+   * @param  {Number} index array index to get value at
+   * @return {Number} value at index
+   */
+  that.get = function(index) {
+    if(index < this.length) {
+      return this[index];
+    }
+    // generate numbers up to our expected index
+    var idx = this.length - 1;
+      
+    for(;idx < index;idx+=1) {
+      var num;
+      if( num = this.buildFn.call(this, idx, this) ) {
+        this.push(num);
+      } else {
+        throw "index does not exist in this set";
+      }
+    }
+    return this[index];
+  };
+
+  /**
+   * attempts to find a value in a set
+   *
+   * @param {Function} end function that should return true when a correct value
+   * is found
+   * @param {Number} start (optional) index to start at
+   */
+  that.findWhere = function(end, start) {
+    var idx = start || 0;
+    for( ;idx < this.length;idx+=1) {
+      this.get(idx);
+      if( end(idx, this) ) {
+        return this[idx];
+      }
+    }
+    return this.slice(start, idx+1);
+  };
+
+  /**
+   * returns subsection of NumberSet
+   * @param  {Number} start index of NumberSet to start at
+   * @param  {Function} end function should return false to halt set
+   *                        should accept (index, set) 
+   * @return {Array}
+   */
+  that.getSet = function(start, end) {
+    var idx = start;
+    for( ;idx<this.length;idx+=1) {
+      if( !end(idx, this) ) {
+        return this.slice(start, idx+1);
+      }
+      this.get(idx+1);
+    }
+    return this.slice(start, idx+1);
+  };
+
+  /**
+   * Returns NumberSet with nth value upto num
+   * @param  {Number} num 
+   * @return {Array}    
+   */
+  that.getSetByMax = function(num) {
+    return that.getSet( 0, function(n, set){ return set[n] < num } );
+  };
+
+  /**
+   * Gets subset by indeces
+   * @param  {Number} start
+   * @param  {Number} end
+   * @return {Array}
+   */
+  that.getSetByIndex = function(start, index) {
+    return that.getSet( start, function(n, set){ return n < index; } );
+  };
+
+  return that;
+}
+
+euler.util.apply(['Function', 'String', 'Number', 'Date', 'RegExp'],function(name) {
+  euler.util['is' + name] = function(obj) {
+    return toString.call(obj) == '[object ' + name + ']';
+  };
+});
+
+
+// Factors
+// -----------------------------------------------------------------------------
+/**
+ * Gets a set of factors for a number
+ * @param  {Number} num 
+ * @return {Array}
+ */
+euler.getFactors = function(num) {
+  return NumberSet([1], function(n, set){ 
+    var count = set[n] + 1;
+    for(;count <= num; count+=1 ) {
+      if( num % count === 0 ) {
+        return count;
+      }
+    }
+    // we have no more factors
+    return false;
+  }).getSetByMax(num);
+};
+
+/**
+ * Determines if a given number has the factors passed to it.
+ *
+ * Search assumes that factors are a subset of the number's factors.
+ * 
+ * @param {Int} num
+ * @param  {Array}  factors array of ints to check against the number
+ * @return {Boolean}
+ */
+euler.hasFactors = function(num, factors){
+  numFactors = euler.getFactors(num);
+  // exit early if we have more factors than the number
+  if( factors > numFactors ) {
+    return false;
+  }
+
+  return factors.every(function(val){ numFactors.indexOf(val) >= 0 });
+};
+
+// Primes
+// ---------------------------------------------------------------
+
+/**
+ * Static number set for primes
+ */
+euler.primes = NumberSet([1], function(n, set){
+  var idx = set[n] + 1;
+  for(;idx;idx+=1){
+    if( euler.getFactors(idx).length === 2 ) {
+      return idx;
+    }
+  }
+});
+
+/**
+ * Thin wrapper for NumberSet#getSetByMax
+ * @param  {Number} num
+ * @return {Array}
+ */
+euler.getPrimes = function(num) {
+  return euler.primes.getSetByMax(num);
+};
+
+/**
+ * Returns all factors of a number that are prime
+ * @param  {Number} num
+ * @return {Array}     [description]
+ */
+euler.getPrimeFactors = function(num) {
+  var factors = euler.getFactors(num)
+    , primes = euler.primes.getSetByMax(num)
+    ;
+  // @todo memoize euler.util.intersect into NumberSet?
+  return euler.util.intersect(factors, primes);
+}
+
+// Specific NumberSets
+// -----------------------------------------------------------------------------
+// Fibonacci
+euler.fibonacci = NumberSet([0,1], function(n, set){
+  return set[n-1] + set[n-2];
+});
