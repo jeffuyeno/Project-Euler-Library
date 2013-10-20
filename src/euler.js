@@ -368,7 +368,8 @@ if(!window.euler) {
  * 
  * @param  {Array} seed NumberSet to be intialized with
  * @param  {Function} buildFn function to iterate for steps, should expect to
- *         receive n, set where n is the current step and set is the current set.
+ *         receive n, set where n is the current existing step and set is the 
+ *         current set.
  *         Should return false if there are no more numbers in the set
  * @return {Object} returns array like object, see that properties for internal methods
  */
@@ -396,7 +397,8 @@ var NumberSet = function(seed, buildFn){
       if( num = this.buildFn.call(this, idx, this) ) {
         this.push(num);
       } else {
-        throw "index does not exist in this set";
+        // we don't have anymore numbers in this set, exit;
+        return this[index];
       }
     }
     return this[index];
@@ -431,11 +433,13 @@ var NumberSet = function(seed, buildFn){
     var idx = start;
     for( ;idx<this.length;idx+=1) {
       if( !end(idx, this) ) {
-        return this.slice(start, idx+1);
+        // we use idx as the terminal for slice since we don't want to include
+        // the current index
+        return this.slice(start, idx);
       }
       this.get(idx+1);
     }
-    return this.slice(start, idx+1);
+    return this.slice(start, idx);
   };
 
   /**
@@ -484,7 +488,7 @@ euler.getFactors = function(num) {
     }
     // we have no more factors
     return false;
-  }).getSetByMax(num);
+  }).getSetByMax(num+1); // getSetByMax is non-inclusive of the ceiling so adding one
 };
 
 /**
@@ -527,8 +531,7 @@ euler.primes = NumberSet([1], function(n, set){
  * @return {Array}
  */
 euler.getPrimes = function(num) {
-  var primes = euler.primes.getSetByMax(num);
-  return primes.slice(0, - 1);
+  return euler.primes.getSetByMax(num);
 };
 
 /**
@@ -548,5 +551,5 @@ euler.getPrimeFactors = function(num) {
 // -----------------------------------------------------------------------------
 // Fibonacci
 euler.fibonacci = NumberSet([0,1], function(n, set){
-  return set[n-1] + set[n-2];
+  return set[n] + set[n-1];
 });
