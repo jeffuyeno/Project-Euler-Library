@@ -10,10 +10,7 @@ number sets, but no guaruntees are made about __not__ hanging your browser as th
 
 More information to follow.
 
-## Current considerations:
-* Should number sets be represented by their own object?
-  ** this would allow obfuscating set hashing by calling a ```get``` method
-  ** the ```get``` method should probably allow fetching by index and by callback
-* Other high order methods besides buildNumberSet?
-* add Array filter to filter uniques out (probably want to optimize this call)
-* 
+## TODOs
+* Optimize NumberSet search methods, they could greatly benefit from binary search as a default search algorithm
+* add binary search strategy
+* Patch gaping performance hole for numbers larger than 100,000,000; likely related to really inefficient search algorithms
