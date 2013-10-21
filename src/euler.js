@@ -1,189 +1,190 @@
 if(!window.euler) {
-  
+  var euler = {};
+
   // Maths
   // ---------------------------------------------------------------------------
-  var euler = {
-    /**
-     * Gets all of the factors of a number
-     * @param  {Int} num
-     * @return {Array} ordered array of multiples, should have no duplicates
-     */
-    getFactors : function(num) {
-      var base = [];
-    },
+  // var euler = {
+  //   /**
+  //    * Gets all of the factors of a number
+  //    * @param  {Int} num
+  //    * @return {Array} ordered array of multiples, should have no duplicates
+  //    */
+  //   getFactors : function(num) {
+  //     var base = [];
+  //   },
 
-    /**
-     * Determines if a given number has the factors passed to it
-     * @param {Int} num
-     * @param  {Array}  factors array of ints to check against the number
-     * @return {Boolean}
-     */
-    hasFactors : function(num, factors) {
-      //if the number is small or the factors are small, might be faster
-      //to % than to getFactors()
-      var i
-        , len = factors.length
-        ; 
-      for(i = len; i--;) {
-        if( num % factors[i] !== 0 ) {
-          return false;
-        }
-      }
+  //   *
+  //    * Determines if a given number has the factors passed to it
+  //    * @param {Int} num
+  //    * @param  {Array}  factors array of ints to check against the number
+  //    * @return {Boolean}
+     
+  //   hasFactors : function(num, factors) {
+  //     //if the number is small or the factors are small, might be faster
+  //     //to % than to getFactors()
+  //     var i
+  //       , len = factors.length
+  //       ; 
+  //     for(i = len; i--;) {
+  //       if( num % factors[i] !== 0 ) {
+  //         return false;
+  //       }
+  //     }
 
-      return true;
-    },
-  }
+  //     return true;
+  //   },
+  // }
 
-  euler.prime = {
-  // Primes
-  // ---------------------------------------------------------------------------
-    init : function() {
-      euler.util.hash.set('primes', [1]);
-    },
+  // euler.prime = {
+  // // Primes
+  // // ---------------------------------------------------------------------------
+  //   init : function() {
+  //     euler.util.hash.set('primes', [1]);
+  //   },
 
-    /**
-     * Gets all the prime factors for a number
-     * @param  {[type]} num [description]
-     * @return {[type]}     [description]
-     */
-    getPrimeFactors : function(num) {
-      var factors = []
-        , primes = this.getPrimes(num)
-        ;
+  //   /**
+  //    * Gets all the prime factors for a number
+  //    * @param  {[type]} num [description]
+  //    * @return {[type]}     [description]
+  //    */
+  //   getPrimeFactors : function(num) {
+  //     var factors = []
+  //       , primes = this.getPrimes(num)
+  //       ;
       
-      euler.util.filter(primes, function(idx, factor){
-        if( num % factor === 0 ) {
-          return true;
-        }
-        return false;
-      });
+  //     euler.util.filter(primes, function(idx, factor){
+  //       if( num % factor === 0 ) {
+  //         return true;
+  //       }
+  //       return false;
+  //     });
 
-      return primes;
-    },
+  //     return primes;
+  //   },
 
-    /**
-     * Wrapper around 'primes' NumberSet namespace  
-     * @param  {Int} num value to get primes up to
-     * @return {Array}
-     */
-    getPrimes : function(num) {
-      var primes = euler.util.getNumberSet(this._primes, num, 'primes');
+  //   /**
+  //    * Wrapper around 'primes' NumberSet namespace  
+  //    * @param  {Int} num value to get primes up to
+  //    * @return {Array}
+  //    */
+  //   getPrimes : function(num) {
+  //     var primes = euler.util.getNumberSet(this._primes, num, 'primes');
 
-      return primes;
-    },
+  //     return primes;
+  //   },
 
-    /**
-     * Generates next prime in list, for use with buildSet
-     * @param  {Number} n 
-     * @param  {Array} set
-     * @return {Number}     [description]
-     */
-    _primes : function(n, set) {
-      var i = set[n] + 1; 
+  //   *
+  //    * Generates next prime in list, for use with buildSet
+  //    * @param  {Number} n 
+  //    * @param  {Array} set
+  //    * @return {Number}     [description]
+     
+  //   _primes : function(n, set) {
+  //     var i = set[n] + 1; 
 
-      //early escape
-      if( euler.prime.isPrime(i) ) {
-        return i;
-      }
+  //     //early escape
+  //     if( euler.prime.isPrime(i) ) {
+  //       return i;
+  //     }
 
-      while( !euler.prime.isPrime(i) ) {
-        if( euler.prime.isPrime(i) ) {
-          return i;
-        }
-        i++;
-      }
+  //     while( !euler.prime.isPrime(i) ) {
+  //       if( euler.prime.isPrime(i) ) {
+  //         return i;
+  //       }
+  //       i++;
+  //     }
 
-      return 0;
-    },
+  //     return 0;
+  //   },
     
 
-    /**
-     * Determines if a number is prime
-     * @param  {Number}  num 
-     * @return {Boolean}     
-     */
-    isPrime: function(num) {
-      //early exits
-      if( num == 1 || num == 2 ) {
-        return true;
-      }
+  //   /**
+  //    * Determines if a number is prime
+  //    * @param  {Number}  num 
+  //    * @return {Boolean}     
+  //    */
+  //   isPrime: function(num) {
+  //     //early exits
+  //     if( num == 1 || num == 2 ) {
+  //       return true;
+  //     }
       
-      var len = Math.sqrt(num)
-        , i
-        ;
+  //     var len = Math.sqrt(num)
+  //       , i
+  //       ;
 
-      //early exits
-      if( len === Math.floor(len) ) {
-        return false;
-      }
+  //     //early exits
+  //     if( len === Math.floor(len) ) {
+  //       return false;
+  //     }
 
-      len = Math.floor(len);
+  //     len = Math.floor(len);
 
-      for( i=2; i<len; i++ ) {
-        if( num % i === 0 ) {
-          return false;
-        }
-      } 
+  //     for( i=2; i<len; i++ ) {
+  //       if( num % i === 0 ) {
+  //         return false;
+  //       }
+  //     } 
 
-      return true;
+  //     return true;
     
-    }
-  };
+  //   }
+  // };
   
   // Fibonacci Methods
   // ---------------------------------------------------------------------------  
   
-  euler.fibonacci = {
-    _inited : false,
-    init : function() {
-      if( !this._inited ) {
-        euler.util.hash.set('fibonacci', [0,1]);
-        this._inited = true;
-      }
-    },
+  // euler.fibonacci = {
+  //   _inited : false,
+  //   init : function() {
+  //     if( !this._inited ) {
+  //       euler.util.hash.set('fibonacci', [0,1]);
+  //       this._inited = true;
+  //     }
+  //   },
 
-    /**
-     * Builds fibonacci sequence up to max number
-     * @param {Number} ceiling maximum number to get fibonacci sequence by
-     */
-    byMax : function(ceiling) {
-      var set = [];
+  //   /**
+  //    * Builds fibonacci sequence up to max number
+  //    * @param {Number} ceiling maximum number to get fibonacci sequence by
+  //    */
+  //   byMax : function(ceiling) {
+  //     var set = [];
 
-      set = euler.util.getNumberSet(this._fibonacci, ceiling, 'fibonacci');
+  //     set = euler.util.getNumberSet(this._fibonacci, ceiling, 'fibonacci');
 
-      return set;
-    },
+  //     return set;
+  //   },
 
-    /**
-     * Builds fibonacci up to index
-     * @param  {Number} index 
-     * @return {Array}
-     */
-    byIndex : function(index) {
-      var set = [];
-      //hash this
-      set = euler.util.buildNumberSet(this._fibonacci, function(n, set) {
-        return ( n <= index );
-      }, 'fibonacci');
+  //   *
+  //    * Builds fibonacci up to index
+  //    * @param  {Number} index 
+  //    * @return {Array}
+     
+  //   byIndex : function(index) {
+  //     var set = [];
+  //     //hash this
+  //     set = euler.util.buildNumberSet(this._fibonacci, function(n, set) {
+  //       return ( n <= index );
+  //     }, 'fibonacci');
 
-      return set;
-    },
+  //     return set;
+  //   },
 
-    /**
-     * Intended for internal use with euler.util.buildSet
-     * @param  {Number} n   [description]
-     * @param  {Array} set [description]
-     * @return {Number}
-     */
-    _fibonacci : function(n, set) {
-      var len = set.length;
-      //we don't meet the minimum requirements for fibonacci sequence
-      if( len < 2 ) {
-        throw "Fibonacci sequences expect to be seeded with at least [0, 1]"
-      }
-      return set[len -1] + set[len-2];
-    }
-  };
+  //   /**
+  //    * Intended for internal use with euler.util.buildSet
+  //    * @param  {Number} n   [description]
+  //    * @param  {Array} set [description]
+  //    * @return {Number}
+  //    */
+  //   _fibonacci : function(n, set) {
+  //     var len = set.length;
+  //     //we don't meet the minimum requirements for fibonacci sequence
+  //     if( len < 2 ) {
+  //       throw "Fibonacci sequences expect to be seeded with at least [0, 1]"
+  //     }
+  //     return set[len -1] + set[len-2];
+  //   }
+  // };
   
 
   
@@ -386,16 +387,17 @@ var NumberSet = function(seed, buildFn){
    * @return {Number} value at index
    */
   that.get = function(index) {
-    if(index < this.length) {
+    if( this[index] ) {
       return this[index];
     }
     // generate numbers up to our expected index
-    var idx = this.length - 1;
+    var idx = this.length - 1
+      , num
+      ;
       
     for(;idx < index;idx+=1) {
-      var num;
-      if( num = this.buildFn.call(this, idx, this) ) {
-        this.push(num);
+      if( num = this.buildFn(idx, this[index-1], this[index-2]) ) {
+        this[index] = num;
       } else {
         // we don't have anymore numbers in this set, exit;
         return this[index];
@@ -432,7 +434,7 @@ var NumberSet = function(seed, buildFn){
   that.getSet = function(start, end) {
     var idx = start;
     for( ;idx<this.length;idx+=1) {
-      if( !end(idx, this) ) {
+      if( !end(idx, this[idx], this[idx-1]) ) {
         // we use idx as the terminal for slice since we don't want to include
         // the current index
         return this.slice(start, idx);
@@ -448,7 +450,7 @@ var NumberSet = function(seed, buildFn){
    * @return {Array}    
    */
   that.getSetByMax = function(num) {
-    return that.getSet( 0, function(n, set){ return set[n] < num } );
+    return that.getSet( 0, function(n, val, prev){ return val < num } );
   };
 
   /**
@@ -458,7 +460,7 @@ var NumberSet = function(seed, buildFn){
    * @return {Array}
    */
   that.getSetByIndex = function(start, index) {
-    return that.getSet( start, function(n, set){ return n < index; } );
+    return this.slice(start, index);
   };
 
   return that;
@@ -479,8 +481,8 @@ euler.util.apply(['Function', 'String', 'Number', 'Date', 'RegExp'],function(nam
  * @return {Array}
  */
 euler.getFactors = function(num) {
-  return NumberSet([1], function(n, set){ 
-    var count = set[n] + 1;
+  return NumberSet([1], function(n){ 
+    var count = this[n] + 1;
     for(;count <= num; count+=1 ) {
       if( num % count === 0 ) {
         return count;
@@ -516,16 +518,49 @@ euler.hasFactors = function(num, factors){
 // ---------------------------------------------------------------
 
 /**
+ * Determines if a number is prime
+ * @param  {Number}  num 
+ * @return {Boolean}     
+ */
+euler.isPrime = function(num) {
+  //early exits
+  if( num == 1 || num == 2 ) {
+    return true;
+  }
+  
+  var len = Math.sqrt(num)
+    , i
+    ;
+
+  // this number has a integer square which means it has more than 2 factors
+  // exit early
+  if( len === Math.floor(len) ) {
+    return false;
+  }
+
+  len = Math.floor(len);
+  for( i=2; i<=len; i++ ) {
+    if( num % i === 0 ) {
+      return false;
+    }
+  } 
+
+  return true;
+};
+
+/**
  * Static number set for primes
  */
-euler.primes = NumberSet([1], function(n, set){
-  var idx = set[n] + 1;
-  for(;idx;idx+=1){
-    if( euler.getFactors(idx).length === 2 ) {
+euler.primes = NumberSet([1], function(n, val, prev){
+  var idx = val + 1;
+  for(;idx;idx+=1) {
+    if( euler.isPrime(idx) ) {
       return idx;
     }
   }
+  return false;
 });
+
 
 /**
  * Thin wrapper for NumberSet#getSetByMax
@@ -543,15 +578,18 @@ euler.getPrimes = function(num) {
  */
 euler.getPrimeFactors = function(num) {
   var factors = euler.getFactors(num)
-    , primes = euler.primes.getSetByMax(num)
+    // , primes = euler.primes.getSetByMax(num)
     ;
+  return factors.filter(function(n) {
+    return euler.isPrime(n);
+  });
   // @todo memoize euler.util.intersect into NumberSet?
-  return euler.util.intersect(factors, primes);
+  // return euler.util.intersect(factors, primes);
 }
 
 // Specific NumberSets
 // -----------------------------------------------------------------------------
 // Fibonacci
-euler.fibonacci = NumberSet([0,1], function(n, set){
-  return set[n] + set[n-1];
+euler.fibonacci = NumberSet([0,1], function(n, val, prev){
+  return val + prev;
 });

@@ -18,10 +18,8 @@ if( !window.eulerproblems ) {
     // #2
   , { description: "By considering the terms in the Fibonacci sequence whose values do not exceed four million, find the sum of the even-valued terms."
     , solution: function() {
-        euler.fibonacci.init();
-
         var solution = 0
-          , set = euler.fibonacci.byMax(4000000)
+          , set = euler.fibonacci.getSetByMax(4000000)
           ;
         euler.util.apply(set, function(val, index){
           if( val % 2 == 0 ) {
@@ -33,10 +31,9 @@ if( !window.eulerproblems ) {
     }
   , { description: "Find the largest prime factor of a composite number."
     , solution: function() {
-        euler.prime.init();
         var solution = 0
           , target = 600851475143
-          , primeFactors = euler.prime.getPrimeFactors(target)
+          , primeFactors = euler.getPrimeFactors(target)
           ;
 
         solution = primeFactors[primeFactors.length - 1];
